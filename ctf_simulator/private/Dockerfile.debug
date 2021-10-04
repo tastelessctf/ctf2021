@@ -1,0 +1,18 @@
+FROM archlinux as builder
+RUN pacman -Sy --noconfirm base-devel  clang 
+RUN mkdir /build
+ADD *.c *.h *.cpp *.hpp *.py Makefile /build/
+WORKDIR /build
+RUN make
+
+FROM archlinux as debug
+COPY --from=builder /build/chall /chall
+RUN pacman -Sy --noconfirm wget python3 gdb python-pip tmux socat
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen
+ENV LANG en_US.UTF-8  
+ENV LANGUAGE en_US:en  
+ENV LC_ALL en_US.UTF-8
+RUN pip3 install pwn
+ADD flag.txt /flag
+RUN wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef.sh | sh
