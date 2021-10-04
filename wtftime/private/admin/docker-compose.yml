@@ -1,0 +1,50 @@
+version: '3'
+services:
+  kue-ui:
+    build: kue-ui/
+    restart: unless-stopped
+    networks:
+    - wtftime
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+  worker:
+    build: worker/
+    restart: unless-stopped
+    networks:
+    - wtftime
+    environment:
+      USERNAME: "admin"
+      WORKER_ID: 1
+      PUSHGATEWAY: "http://pushgateway:9091"
+      ADMIN_PW: 247t87f784g874gf782g874gf847
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+  redis:
+    image: redis
+    restart: unless-stopped
+    networks:
+    - wtftime
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+
+  pushgateway:
+    image: prom/pushgateway:v1.0.0
+    container_name: pushgateway
+    restart: unless-stopped
+    ports:
+    - "9101:9091"
+    networks:
+    - wtftime
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+networks:
+  wtftime:
+    name: wtftime

@@ -1,0 +1,17 @@
+{
+    "name": "mini-lit",
+    "scripts": {
+        "build": "./node_modules/.bin/rollup -c"
+    },
+    "dependencies": {
+        "@rollup/plugin-node-resolve": "^13.0.4",
+        "lit": "^2.0.0-rc.2",
+        "rollup": "^2.58.0"
+    },
+    "snowpack": {
+        "install": [
+            "bootstrap",
+            "@webcomponents/webcomponentsjs"
+        ]
+    }
+}

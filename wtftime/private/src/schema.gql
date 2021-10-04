@@ -1,0 +1,66 @@
+type Organizer {
+    name: String
+    wtfs: [WTF]
+}
+
+input NewWTF {
+    name: String
+    description: String
+}
+
+type WTF {
+    id: ID
+    name: String
+    organizer: Organizer
+    description: String
+    challs: [Chall]
+    scoreboard: [ScoreboardEntry]
+}
+
+input NewChall {
+    wtf: ID
+    name: String
+    description: String
+    points: Int
+    flag: String
+}
+
+type Chall {
+    id: ID
+    wtf: WTF
+    name: String
+    flag: String
+    description: String
+    points: Int
+    solves: [Solve]
+}
+
+type Solve {
+    user: String,
+    challenge: Chall,
+}
+
+type ScoreboardEntry {
+    user: String
+    points: Int
+}
+
+type CurrentUser {
+    username: String
+    admin: Boolean
+}
+
+type Query {
+    organizers: [Organizer]
+    currentUser: CurrentUser
+    wtf(id: ID): WTF
+}
+
+type Mutation {
+    register(username: String, password: String): Boolean
+    authenticate(username: String, password: String): String
+    logout: Boolean
+    createWTF(input: NewWTF): WTF
+    createChall(input: NewChall): Chall
+    submitFlag(flag: String): Solve
+}

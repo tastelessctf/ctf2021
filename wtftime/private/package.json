@@ -1,0 +1,34 @@
+{
+  "name": "wtftime",
+  "version": "1.33.7",
+  "description": "manage all your wtf's in one place",
+  "scripts": {
+    "build": "tsc",
+    "submitter": "node dist/submitter.js",
+    "start": "node dist/app.js"
+  },
+  "author": "plonk",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "express": "^4.17.1",
+    "express-graphql": "^0.12.0",
+    "express-session": "^1.17.1",
+    "graphql": "^15.5.0",
+    "graphql-tools": "^7.0.4",
+    "kue": "^0.11.6",
+    "sanitize-html": "^2.5.1",
+    "sqlite": "^4.0.21",
+    "sqlite3": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "@types/express-graphql": "^0.9.0",
+    "@types/express-session": "^1.17.3",
+    "@types/kue": "^0.11.13",
+    "@types/sanitize-html": "^2.3.2",
+    "@types/sqlite3": "^3.1.7",
+    "prettier": "2.2.1",
+    "tslint": "^6.1.3",
+    "typescript": "^4.2.3"
+  }
+}
