@@ -1,0 +1,59 @@
+.program decoder
+
+.wrap_target
+start:
+	pull
+	set y, 0
+parse_byte:
+	out x, 1 ; first bit 0 -> op1
+	jmp !X dispatch_op1
+	out ISR, 7
+	push
+looper:
+	jmp y-- parse_byte
+.wrap
+
+
+dispatch_op1:
+	set x, 7
+	irq wait 1
+bitloop:
+	out PINS, 1 [8]
+	jmp x-- bitloop
+	jmp looper
+
+
+
+.program get_op1
+.wrap_target
+	set x, 7
+	wait 1 irq 1
+bitloop_o1:
+	in pins, 1 [8]
+	jmp x-- bitloop_o1
+	in null, 25
+	push
+.wrap
+
+.program a
+; operation: wait for line being pulled up, then write out.
+;            afterwards, wait for pull up again, and start sampling for updated val
+.wrap_target
+    set x, 7
+    mov osr, y
+    wait 1 gpio 4
+
+; write_out
+bitloop:
+	out pins, 1 [8]
+	jmp x-- bitloop
+
+; read_in
+    set x, 7
+    wait 0 gpio 4
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+	in null, 25
+    mov y, isr
+.wrap

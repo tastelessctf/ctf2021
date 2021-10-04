@@ -1,0 +1,342 @@
+.program set_a
+    pull
+    set x, 7
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	nop [8]
+	jmp x-- bitloop_in
+
+    set x, 7
+    nop [8]
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out
+	jmp x-- bitloop_out
+
+    irq 3
+end:
+    jmp end
+
+.program get_a
+    set x, 7
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+
+    in null, 25
+    mov osr, isr [1]
+    set x, 7
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out (effecitvely writing back A)
+	jmp x-- bitloop_out
+
+    push
+    irq 3
+end:
+    jmp end
+
+
+; The core logic of this program is taken from pico examples:
+; https://github.com/raspberrypi/pico-examples/blob/master/pio/addition/addition.pio
+.program add
+    ; get a
+    set x, 7
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+
+    in null, 25
+    pull
+
+	mov x, ~osr
+	mov y, isr
+
+	jmp test        ; this loop is equivalent to the following C code:
+incr:               ; while (y--)
+	jmp x-- test    ;     x--;
+test:               ; This has the effect of subtracting y from x, eventually.
+	jmp y-- incr
+	mov isr, ~x
+
+    ; let's write the result back
+    mov osr, isr
+    set x, 7
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out (effecitvely writing back A)
+	jmp x-- bitloop_out
+
+    irq 3
+end:
+    jmp end
+
+
+
+.program sub
+    ; get a
+    set x, 7
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+
+    in null, 25
+    pull
+
+	mov x, isr
+	mov y, osr
+
+    ; calculate x-y (adjusted add from from pico examples)
+	jmp test        ; this loop is equivalent to the following C code:
+incr:               ; while (y--)
+	jmp x-- test    ;     x--;
+test:               ; This has the effect of subtracting y from x, eventually.
+	jmp y-- incr
+
+    ; let's write the result back
+	mov osr, x
+    ;mov osr, isr
+    set x, 7
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out (effecitvely writing back A)
+	jmp x-- bitloop_out
+
+    irq 3
+end:
+    jmp end
+
+
+
+.program not
+    ; get a
+    set x, 7
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+
+    ;in null, 25
+
+    set y, 0x10
+    mov x, isr
+	mov osr,~y
+    set x, 7
+    nop[10]
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out (effecitvely writing back A)
+	jmp x-- bitloop_out
+
+    irq 3
+end:
+    jmp end
+
+.program inv
+    ; get a
+    set x, 7
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+
+    ;in null, 25
+
+	mov osr, ::isr
+    set x, 7
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out (effecitvely writing back A)
+	jmp x-- bitloop_out
+
+    irq 3
+end:
+    jmp end
+
+
+
+.program inc
+    ; get a
+    set x, 7
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+
+    in null, 25
+
+	mov x, ~isr
+	set y, 1
+
+    ; adjusted from pico examples
+	jmp test        ; this loop is equivalent to the following C code:
+incr:               ; while (y--)
+	jmp x-- test    ;     x--;
+test:               ; This has the effect of subtracting y from x, eventually.
+	jmp y-- incr
+	mov isr, ~x
+
+    ; let's write the result back
+    mov osr, isr
+    set x, 7
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out (effecitvely writing back A)
+	jmp x-- bitloop_out
+
+    irq 3
+end:
+    jmp end
+
+.program dec
+    ; get a
+    set x, 7
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+
+    in null, 25
+
+	mov x, isr
+	set y, 1
+
+    ; adjusted from pico examples
+	jmp test        ; this loop is equivalent to the following C code:
+incr:               ; while (y--)
+	jmp x-- test    ;     x--;
+test:               ; This has the effect of subtracting y from x, eventually.
+	jmp y-- incr
+	mov isr, x
+
+    ; let's write the result back
+    mov osr, isr
+    set x, 7
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out (effecitvely writing back A)
+	jmp x-- bitloop_out
+
+    irq 3
+end:
+    jmp end
+
+
+
+.program cmp
+    ; get a
+    set x, 7
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+
+    in null, 25
+    mov y, isr
+    pull
+    mov x, osr
+
+    irq clear 4
+
+    jmp X!=Y nirq
+    irq 4
+nirq:
+
+    ; let's write the result back
+    mov osr,isr
+    set x, 7
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out (effecitvely writing back A)
+	jmp x-- bitloop_out
+
+    irq 3
+end:
+    jmp end
+
+
+.program shl
+    ; get a
+    set x, 6
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+
+    in null, 25 [8]
+
+
+    ; let's write the result back
+    mov osr,isr
+    set x, 7
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out (effecitvely writing back A)
+	jmp x-- bitloop_out
+
+    irq 3
+end:
+    jmp end
+
+
+.program shr
+    set x, 7
+    set pins, 1 ; signal data to be received
+bitloop_in:
+	in pins, 1 [8]
+	jmp x-- bitloop_in
+
+    in null, 26
+    mov osr, isr [1]
+    set x, 7
+
+    set pins, 0 ; signal data to be sent
+bitloop_out:
+	out pins, 1 [8] ; write data out (effecitvely writing back A)
+	jmp x-- bitloop_out
+
+    irq 3
+end:
+    jmp end
+
+
+
+.program check_flag
+pull
+mov isr, osr
+set y, 2
+
+out null, 13
+
+;verify this is indeed a "set" instruction
+check_loop:
+    out x, 1
+    jmp !x, exit
+    jmp y--, check_loop
+
+    ; execute instruction calculated from flag
+    mov osr, isr
+    out exec, 16
+    ; if the flag was correct, x should be 23 - let's test this!
+    set y, 0x17
+    mov isr, x
+    jmp x!=y, exit
+    irq 4 ; win!
+
+exit:
+    irq 3
+end:
+    jmp end
