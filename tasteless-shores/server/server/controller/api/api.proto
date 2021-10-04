@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+option go_package = "ts/server/controller/api";
+
+message Event {
+    string event = 1;
+}
+
+message AuthRequest {
+    string user = 1;
+    string password = 2;
+    string host = 3;
+}
+
+message Player {
+    uint64 id = 1;
+    string team = 2;
+    uint32 char = 3;
+    repeated string marker = 4;
+    uint32 area = 5;
+}
+
+message InventoryRequest {
+    uint64 id = 1;
+    string host = 2;
+}
+
+message InventoryResponse {
+    uint64 id = 1;
+    repeated uint64 items = 2;
+}
+
+message AddItemRequest {
+    uint64 id = 1;
+    uint64 item = 2;
+    string host = 3;
+}
+
+message AddMarkerRequest {
+    uint64 id = 1;
+    string marker = 2;
+    string host = 3;
+}
+
+message ChangeAreaRequest {
+    uint64 id = 1;
+    uint32 area = 2;
+    string host = 3;
+}
+
+message ChangeCharRequest {
+    uint64 id = 1;
+    uint32 char = 2;
+    string host = 3;
+}
+
+message AddShardRequest {
+    uint64 id = 1;
+    string host = 2;
+}
+
+message RmShardRequest {
+    uint64 id = 1;
+    string host = 2;
+}
+
+message MoveShardRequest {
+    uint64 id = 1;
+    uint32 area = 2;
+    string host = 3;
+}
+
+message MoveUserRequest {
+    uint64 id = 1;
+    uint64 shard = 2;
+    uint32 area = 3;
+    string host = 4;
+}
+
+message EventsRequest {
+    string host = 1;
+}
+
+message EmptyRequest {}
+message EmptyResponse {}
+
+service Controller {
+  rpc Events (EventsRequest) returns (stream Event);
+  rpc Auth (AuthRequest) returns (Player);
+  rpc Inventory (InventoryRequest) returns (InventoryResponse);
+  rpc AddItem (AddItemRequest) returns (EmptyResponse);
+  rpc AddMarker (AddMarkerRequest) returns (EmptyResponse);
+  rpc ChangeArea (ChangeAreaRequest) returns (EmptyResponse);
+  rpc ChangeChar (ChangeCharRequest) returns (EmptyResponse);
+  rpc AddShard(AddShardRequest) returns (EmptyResponse);
+  rpc RmShard(RmShardRequest) returns (EmptyResponse);
+  rpc MoveShard(MoveShardRequest) returns (EmptyResponse);
+  rpc MoveUser(MoveUserRequest) returns (EmptyResponse);
+}
+
+message AdminUsersResponse {
+    repeated AdminUser users = 1;
+}
+
+message AdminUser {
+    Player player = 1;
+    string user = 2;
+}
+
+message AdminEvent {
+    string event = 1;
+    string data = 2;
+    string host = 3;
+}
+
+message CommandRequest {
+    string cmd = 1;
+}
+
+service Admin {
+    rpc Users (EmptyRequest) returns (AdminUsersResponse);
+    rpc Events (EmptyRequest) returns (stream AdminEvent);
+    rpc Command (CommandRequest) returns (EmptyResponse);
+}

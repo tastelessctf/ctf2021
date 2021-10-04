@@ -1,0 +1,25 @@
+extends Object
+
+const VIEW_DISTANCE = 30.0
+
+enum Collision {
+	GROUND = 1
+	PLAYER = 2
+	NPC = 4
+	ENEMY = 8
+	LOCALPLAYER = 16
+	
+	SERVERPLAYER = 1024
+	SERVERENEMY = 2048
+}
+
+enum Unit {
+	NPC
+	PLAYER
+	SKELETON
+	SEARABBIT
+}
+
+enum Quest {
+	WHITE_SEARABBIT
+}
