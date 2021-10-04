@@ -1,0 +1,2 @@
+user1 -1 user1 -1 user1 /home/user1 /home/user1/script.py - not the flag user
+user2 -1 user2 -1 user2 /home/user2 /home/user2/script.py - the flag user
