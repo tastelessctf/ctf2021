@@ -28,7 +28,6 @@ func _ready():
 	assert(player.connect("water_exited", self, "_on_Player_water_exited") == OK)
 	assert(player.connect("equipped", self, "_on_Player_equipped") == OK)
 	placePivot.hide()
-	player.hide()
 
 func enable_placement():
 	placeRayCast.enabled = true

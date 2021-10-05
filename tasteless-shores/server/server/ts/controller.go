@@ -54,10 +54,10 @@ func connectController() controller {
 				Id:     rand.Uint64(),
 				Team:   "Local",
 				Char:   6,
-				Marker: []string{"FLAG_EYES", "FLAG_BOAT"},
+				Marker: []string{"FLAG_EYES"},
 				Area:   0,
 			},
-			inv: []uint64{3, 4, 5, 6, 7, 8},
+			inv: []uint64{3},
 		}
 	}
 

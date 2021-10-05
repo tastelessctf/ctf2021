@@ -58,7 +58,6 @@ func _on_PopupDialog_popup_hide():
 	game_mouse()
 
 func _on_Accept_pressed():
-	popup_dialog.hide()
 	if askCallback != null:
 		askCallback[0].call_deferred(askCallback[1])
 
